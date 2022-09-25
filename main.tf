@@ -10,11 +10,11 @@ data "intersight_organization_organization" "org_moid" {
       regexall("[[:xdigit:]]{24}", var.organization)
     ) == 0
   }
-  name     = each.value
+  name = each.value
 }
 
 data "intersight_ippool_pool" "ip" {
-  for_each = { for v in compact([var.initiator_ip_pool, var.out_of_band_ip_pool]) : v => v }
+  for_each = { for v in compact([var.inband_ip_pool, var.out_of_band_ip_pool]) : v => v }
   name     = each.value
 }
 
@@ -94,9 +94,9 @@ resource "intersight_access_policy" "imc_access" {
   dynamic "out_of_band_ip_pool" {
     for_each = {
       for k, v in [var.out_of_band_ip_pool] : v => v if length(compact([var.out_of_band_ip_pool])) > 0
-      }
+    }
     content {
-      moid        = data.intersight_ippool_pool.ip[each.value.out_of_band_ip_pool].moid
+      moid        = data.intersight_ippool_pool.ip[var.out_of_band_ip_pool].moid
       object_type = "ippool.Pool"
     }
   }

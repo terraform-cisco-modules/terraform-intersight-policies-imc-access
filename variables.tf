@@ -22,7 +22,7 @@ variable "enable_ipv6" {
 }
 
 variable "inband_vlan_id" {
-  default     = 1
+  default     = 4
   description = "VLAN ID to Assign as the Inband Management VLAN for IMC Access."
   type        = number
 }
