@@ -9,18 +9,6 @@ variable "description" {
   type        = string
 }
 
-variable "enable_ipv4" {
-  default     = true
-  description = "Flag to Enable or Disable the IPv4 Address Family for Poliices."
-  type        = bool
-}
-
-variable "enable_ipv6" {
-  default     = false
-  description = "Flag to Enable or Disable the IPv6 Address Family for Poliices."
-  type        = bool
-}
-
 variable "inband_vlan_id" {
   default     = 4
   description = "VLAN ID to Assign as the Inband Management VLAN for IMC Access."
@@ -30,6 +18,18 @@ variable "inband_vlan_id" {
 variable "inband_ip_pool" {
   default     = ""
   description = "Name of the IP Pool to Assign to the IMC Access Policy."
+}
+
+variable "ipv4_address_configuration" {
+  default     = true
+  description = "Flag to Enable or Disable the IPv4 Address Family for Poliices."
+  type        = bool
+}
+
+variable "ipv6_address_configuration" {
+  default     = false
+  description = "Flag to Enable or Disable the IPv6 Address Family for Poliices."
+  type        = bool
 }
 
 variable "name" {

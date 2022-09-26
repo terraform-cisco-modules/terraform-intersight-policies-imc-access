@@ -73,8 +73,8 @@ resource "intersight_access_policy" "imc_access" {
   inband_vlan = var.inband_vlan_id
   name        = var.name
   address_type {
-    enable_ip_v4 = var.enable_ipv4
-    enable_ip_v6 = var.enable_ipv6
+    enable_ip_v4 = var.ipv4_address_configuration
+    enable_ip_v6 = var.ipv6_address_configuration
     object_type  = "access.AddressType"
   }
   configuration_type {
