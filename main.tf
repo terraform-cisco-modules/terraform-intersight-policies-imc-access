@@ -14,9 +14,14 @@ data "intersight_organization_organization" "org_moid" {
 }
 
 data "intersight_ippool_pool" "ip" {
-  for_each = { for v in compact([var.inband_ip_pool, var.out_of_band_ip_pool]) : v => v }
-  name     = each.value
+  for_each = {
+    for v in toset(compact([var.inband_ip_pool, var.out_of_band_ip_pool])) : v => v if length(
+      regexall("[[:xdigit:]]{24}", v)
+    ) == 0
+  }
+  name = each.value
 }
+
 
 #____________________________________________________________
 #
@@ -85,18 +90,20 @@ resource "intersight_access_policy" "imc_access" {
     object_type = "organization.Organization"
   }
   dynamic "inband_ip_pool" {
-    for_each = { for k, v in [var.inband_ip_pool] : v => v if length(compact([var.inband_ip_pool])) > 0 }
+    for_each = { for k, v in compact([var.inband_ip_pool]) : v => v }
     content {
-      moid        = data.intersight_ippool_pool.ip[var.inband_ip_pool].results[0].moid
+      moid = length(
+        regexall("[[:xdigit:]]{24}", inband_ip_pool.value)
+      ) > 0 ? inband_ip_pool.value : data.intersight_ippool_pool.ip[inband_ip_pool.value].results[0].moid
       object_type = "ippool.Pool"
     }
   }
   dynamic "out_of_band_ip_pool" {
-    for_each = {
-      for k, v in [var.out_of_band_ip_pool] : v => v if length(compact([var.out_of_band_ip_pool])) > 0
-    }
+    for_each = { for k, v in compact([var.out_of_band_ip_pool]) : v => v }
     content {
-      moid        = data.intersight_ippool_pool.ip[var.out_of_band_ip_pool].moid
+      moid = length(
+        regexall("[[:xdigit:]]{24}", out_of_band_ip_pool.value)
+      ) > 0 ? out_of_band_ip_pool.value : data.intersight_ippool_pool.ip[out_of_band_ip_pool.value].results[0].moid
       object_type = "ippool.Pool"
     }
   }
