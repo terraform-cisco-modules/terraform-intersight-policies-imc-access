@@ -38,6 +38,12 @@ variable "name" {
   type        = string
 }
 
+variable "moids" {
+  default     = false
+  description = "Flag to Determine if pools and policies should be data sources or if they already defined as a moid."
+  type        = bool
+}
+
 variable "organization" {
   default     = "default"
   description = "Intersight Organization Name to Apply Policy to.  https://intersight.com/an/settings/organizations/."
@@ -47,6 +53,12 @@ variable "organization" {
 variable "out_of_band_ip_pool" {
   default     = ""
   description = "Name of the IP Pool to Assign to the IMC Access Policy."
+}
+
+variable "pools" {
+  default     = {}
+  description = "Map for Moid based Pool Sources."
+  type        = any
 }
 
 variable "profiles" {

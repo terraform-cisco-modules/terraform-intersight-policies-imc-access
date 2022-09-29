@@ -5,19 +5,13 @@
 #____________________________________________________________
 
 data "intersight_organization_organization" "org_moid" {
-  for_each = {
-    for v in [var.organization] : v => v if length(
-      regexall("[[:xdigit:]]{24}", var.organization)
-    ) == 0
-  }
-  name = each.value
+  for_each = { for v in [var.organization] : v => v if var.moids == false }
+  name     = each.value
 }
 
 data "intersight_ippool_pool" "ip" {
   for_each = {
-    for v in toset(compact([var.inband_ip_pool, var.out_of_band_ip_pool])) : v => v if length(
-      regexall("[[:xdigit:]]{24}", v)
-    ) == 0
+    for v in compact([var.inband_ip_pool, var.out_of_band_ip_pool]) : v => v if var.moids == false
   }
   name = each.value
 }
@@ -82,8 +76,7 @@ resource "intersight_access_policy" "imc_access" {
     configure_out_of_band = var.out_of_band_ip_pool != "" ? true : false
   }
   organization {
-    moid = length(
-      regexall("[[:xdigit:]]{24}", var.organization)
+    moid = length(regexall(true, var.moids)
       ) > 0 ? var.organization : data.intersight_organization_organization.org_moid[
       var.organization].results[0
     ].moid
@@ -92,18 +85,18 @@ resource "intersight_access_policy" "imc_access" {
   dynamic "inband_ip_pool" {
     for_each = { for k, v in compact([var.inband_ip_pool]) : v => v }
     content {
-      moid = length(
-        regexall("[[:xdigit:]]{24}", inband_ip_pool.value)
-      ) > 0 ? inband_ip_pool.value : data.intersight_ippool_pool.ip[inband_ip_pool.value].results[0].moid
+      moid = length(regexall(true, var.moids)) > 0 ? var.pools.ip[
+        inband_ip_pool.value
+      ].moid : data.intersight_ippool_pool.ip[inband_ip_pool.value].results[0].moid
       object_type = "ippool.Pool"
     }
   }
   dynamic "out_of_band_ip_pool" {
     for_each = { for k, v in compact([var.out_of_band_ip_pool]) : v => v }
     content {
-      moid = length(
-        regexall("[[:xdigit:]]{24}", out_of_band_ip_pool.value)
-      ) > 0 ? out_of_band_ip_pool.value : data.intersight_ippool_pool.ip[out_of_band_ip_pool.value].results[0].moid
+      moid = length(regexall(true, var.moids)) > 0 ? var.pools.ip[
+        out_of_band_ip_pool.value
+      ].moid : data.intersight_ippool_pool.ip[out_of_band_ip_pool.value].results[0].moid
       object_type = "ippool.Pool"
     }
   }
