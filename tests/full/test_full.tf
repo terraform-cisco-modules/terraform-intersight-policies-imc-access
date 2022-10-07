@@ -93,12 +93,18 @@ module "main" {
   ]
   source                     = "../.."
   description                = "${var.name} IMC Access Policy."
-  inband_ip_pool             = module.inband.moid
+  inband_ip_pool             = "${var.name}-inb"
   inband_vlan_id             = 4
   ipv4_address_configuration = true
   ipv6_address_configuration = false
   moids                      = true
   name                       = var.name
   organization               = data.intersight_organization_organization.org_moid
-  out_of_band_ip_pool        = module.ooband.moid
+  out_of_band_ip_pool        = "${var.name}-oob"
+  pools = {
+    ip = {
+      "${var.name}-inb" = module.inband.moid
+      "${var.name}-oob" = module.ooband.moid
+    }
+  }
 }
