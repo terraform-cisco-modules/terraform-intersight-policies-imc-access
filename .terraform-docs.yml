@@ -3,11 +3,16 @@ version: '>= 0.14.0'
 formatter: markdown table
 
 content: |-
+  [![Tests](https://github.com/terraform-cisco-modules/terraform-intersight-policies-imc-access/actions/workflows/terratest.yml/badge.svg)](https://github.com/terraform-cisco-modules/terraform-intersight-policies-imc-access/actions/workflows/terratest.yml)
   # Terraform Intersight Policies - IMC Access
   Manages Intersight IMC Access Policies
   
   Location in GUI:
   `Policies` » `Create Policy` » `IMC Access`
+
+  ## Easy IMM
+
+  [*Easy IMM - Comprehensive Example*](https://github.com/terraform-cisco-modules/easy-imm-comprehensive-example) - A comprehensive example for policies, pools, and profiles.
 
   ## Example
 
@@ -44,6 +49,11 @@ content: |-
   $env:TF_VAR_secretkey="<secret-key-file-location>"
   ```
 
+  {{ .Requirements }}
+  {{ .Providers }}
+  {{ .Inputs }}
+  {{ .Outputs }}
+  {{ .Resources }}
 
 output:
   file: README.md
