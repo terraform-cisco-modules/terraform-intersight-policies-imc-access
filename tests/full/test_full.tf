@@ -99,7 +99,7 @@ module "main" {
   ipv6_address_configuration = false
   moids                      = true
   name                       = var.name
-  organization               = data.intersight_organization_organization.org_moid
+  organization               = data.intersight_organization_organization.org_moid.results[0].moid
   out_of_band_ip_pool        = "${var.name}-oob"
   pools = {
     ip = {
