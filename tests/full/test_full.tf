@@ -9,17 +9,24 @@ terraform {
 
 # Setup provider, variables and outputs
 provider "intersight" {
-  apikey    = var.intersight_keyid
-  secretkey = file(var.intersight_secretkeyfile)
-  endpoint  = var.intersight_endpoint
+  apikey    = var.apikey
+  secretkey = file(var.secretkeyfile)
+  endpoint  = var.endpoint
 }
 
-variable "intersight_keyid" {}
-variable "intersight_secretkeyfile" {}
-variable "intersight_endpoint" {
+variable "apikey" {
+  sensitive = true
+}
+
+variable "endpoint" {
   default = "intersight.com"
 }
+
 variable "name" {}
+
+variable "secretkeyfile" {
+  sensitive = true
+}
 
 output "imc" {
   value = module.main.moid
@@ -87,10 +94,6 @@ module "ooband" {
 
 # This is the module under test
 module "main" {
-  depends_on = [
-    module.inband,
-    module.ooband
-  ]
   source                     = "../.."
   description                = "${var.name} IMC Access Policy."
   inband_ip_pool             = "${var.name}-inb"
@@ -103,8 +106,12 @@ module "main" {
   out_of_band_ip_pool        = "${var.name}-oob"
   pools = {
     ip = {
-      "${var.name}-inb" = module.inband.moid
-      "${var.name}-oob" = module.ooband.moid
+      "${var.name}-inb" = {
+        moid = module.inband.moid
+      }
+      "${var.name}-oob" = {
+        moid = module.ooband.moid
+      }
     }
   }
 }

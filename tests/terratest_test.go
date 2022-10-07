@@ -23,9 +23,9 @@ func TestFull(t *testing.T) {
 
 	// Input variables for the TF module
 	vars := map[string]interface{}{
-		"intersight_keyid":         os.Getenv("IS_KEYID"),
-		"intersight_secretkeyfile": os.Getenv("IS_KEYFILE"),
-		"name":                     instanceName,
+		"apikey":        os.Getenv("IS_KEYID"),
+		"secretkeyfile": os.Getenv("IS_KEYFILE"),
+		"name":          instanceName,
 	}
 
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
@@ -46,11 +46,9 @@ func TestFull(t *testing.T) {
 	assert.NotEmpty(t, ooband, "TF module Ooband Pool output should not be empty")
 
 	vars2 := map[string]interface{}{
-		"inband":                   inband,
-		"intersight_keyid":         os.Getenv("IS_KEYID"),
-		"intersight_secretkeyfile": os.Getenv("IS_KEYFILE"),
-		"name":                     instanceName,
-		"ooband":                   ooband,
+		"inband": inband,
+		"name":   instanceName,
+		"ooband": ooband,
 	}
 
 	//========================================================================
