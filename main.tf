@@ -11,7 +11,7 @@ data "intersight_organization_organization" "org_moid" {
 
 data "intersight_ippool_pool" "ip" {
   for_each = {
-    for v in compact([var.inband_ip_pool, var.out_of_band_ip_pool]) : v => v if var.moids == false
+    for v in compact([var.inband_ip_pool, var.out_of_band_ip_pool]) : "${v}" => v if var.moids == false
   }
   name = each.value
 }

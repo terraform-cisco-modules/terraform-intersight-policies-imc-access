@@ -33,6 +33,10 @@ output "ooband" {
   value = module.ooband.moid
 }
 
+data "intersight_organization_organization" "org_moid" {
+  name = "terratest"
+}
+
 module "inband" {
   source  = "terraform-cisco-modules/pools-ip/intersight"
   version = ">=1.0.5"
@@ -95,6 +99,6 @@ module "main" {
   ipv6_address_configuration = false
   moids                      = true
   name                       = var.name
-  organization               = "terratest"
+  organization               = data.intersight_organization_organization.org_moid
   out_of_band_ip_pool        = module.ooband.moid
 }
