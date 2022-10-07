@@ -38,8 +38,20 @@ func TestFull(t *testing.T) {
 	//========================================================================
 	defer terraform.Destroy(t, terraformOptions) // defer to ensure that TF destroy happens automatically after tests are completed
 	terraform.InitAndApply(t, terraformOptions)
-	moid := terraform.Output(t, terraformOptions, "moid")
-	assert.NotEmpty(t, moid, "TF module moid output should not be empty")
+	imc := terraform.Output(t, terraformOptions, "imc")
+	inband := terraform.Output(t, terraformOptions, "inband")
+	ooband := terraform.Output(t, terraformOptions, "ooband")
+	assert.NotEmpty(t, imc, "TF module IMC Policy output should not be empty")
+	assert.NotEmpty(t, inband, "TF module Inband Pool output should not be empty")
+	assert.NotEmpty(t, ooband, "TF module Ooband Pool output should not be empty")
+
+	vars2 := map[string]interface{}{
+		"inband":                   inband,
+		"intersight_keyid":         os.Getenv("IS_KEYID"),
+		"intersight_secretkeyfile": os.Getenv("IS_KEYFILE"),
+		"name":                     instanceName,
+		"ooband":                   ooband,
+	}
 
 	//========================================================================
 	// Make Intersight API call(s) to validate module worked
@@ -60,16 +72,16 @@ func TestFull(t *testing.T) {
 	},
 	"InbandIpPool": {
         "ClassId": "mo.MoRef",
-        "Moid": "6340234b6962752d31b2fe13",
+        "Moid": "{{ .inband }}",
         "ObjectType": "ippool.Pool",
-        "link": "https://www.intersight.com/api/v1/ippool/Pools/6340234b6962752d31b2fe13"
+        "link": "https://www.intersight.com/api/v1/ippool/Pools/{{ .inband }}"
       },
       "InbandVlan": 4,
       "OutOfBandIpPool": {
         "ClassId": "mo.MoRef",
-        "Moid": "634023a06962752d31b3024c",
+        "Moid": "{{ .ooband }}",
         "ObjectType": "ippool.Pool",
-        "link": "https://www.intersight.com/api/v1/ippool/Pools/634023a06962752d31b3024c"
+        "link": "https://www.intersight.com/api/v1/ippool/Pools/{{ .ooband }}"
 	}
 }
 `
@@ -77,5 +89,5 @@ func TestFull(t *testing.T) {
 	// The AssertMOComply function only checks that what is expected is in the result. Extra fields in the
 	// result are ignored. This means we don't have to worry about things that aren't known in advance (e.g.
 	// Moids, timestamps, etc)
-	iassert.AssertMOComply(t, fmt.Sprintf("/api/v1/access/Policies/%s", moid), expectedJSONTemplate, vars)
+	iassert.AssertMOComply(t, fmt.Sprintf("/api/v1/access/Policies/%s", imc), expectedJSONTemplate, vars2)
 }
