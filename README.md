@@ -139,7 +139,7 @@ export TF_VAR_secretkeyfile="<secret-key-file-location>"
 
 | Name | Version |
 |------|---------|
-| <a name="provider_intersight"></a> [intersight](#provider\_intersight) | 1.0.32 |
+| <a name="provider_intersight"></a> [intersight](#provider\_intersight) | >=1.0.32 |
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -152,8 +152,8 @@ export TF_VAR_secretkeyfile="<secret-key-file-location>"
 | <a name="input_inband_ip_pool"></a> [inband\_ip\_pool](#input\_inband\_ip\_pool) | Name of the IP Pool to Assign to the IMC Access Policy. | `string` | `""` | no |
 | <a name="input_ipv4_address_configuration"></a> [ipv4\_address\_configuration](#input\_ipv4\_address\_configuration) | Flag to Enable or Disable the IPv4 Address Family for Poliices. | `bool` | `true` | no |
 | <a name="input_ipv6_address_configuration"></a> [ipv6\_address\_configuration](#input\_ipv6\_address\_configuration) | Flag to Enable or Disable the IPv6 Address Family for Poliices. | `bool` | `false` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name for the Policy. | `string` | `"default"` | no |
 | <a name="input_moids"></a> [moids](#input\_moids) | Flag to Determine if pools and policies should be data sources or if they already defined as a moid. | `bool` | `false` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name for the Policy. | `string` | `"default"` | no |
 | <a name="input_organization"></a> [organization](#input\_organization) | Intersight Organization Name to Apply Policy to.  https://intersight.com/an/settings/organizations/. | `string` | `"default"` | no |
 | <a name="input_out_of_band_ip_pool"></a> [out\_of\_band\_ip\_pool](#input\_out\_of\_band\_ip\_pool) | Name of the IP Pool to Assign to the IMC Access Policy. | `string` | `""` | no |
 | <a name="input_pools"></a> [pools](#input\_pools) | Map for Moid based Pool Sources. | `any` | `{}` | no |
