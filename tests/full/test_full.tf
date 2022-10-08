@@ -1,45 +1,3 @@
-terraform {
-  required_providers {
-    intersight = {
-      source  = "CiscoDevNet/intersight"
-      version = ">=1.0.32"
-    }
-  }
-}
-
-# Setup provider, variables and outputs
-provider "intersight" {
-  apikey    = var.apikey
-  endpoint  = var.endpoint
-  secretkey = file(var.secretkeyfile)
-}
-
-variable "apikey" {
-  sensitive = true
-}
-
-variable "endpoint" {
-  default = "intersight.com"
-}
-
-variable "name" {}
-
-variable "secretkeyfile" {
-  sensitive = true
-}
-
-output "imc" {
-  value = module.main.moid
-}
-
-output "inband" {
-  value = module.inband.moid
-}
-
-output "ooband" {
-  value = module.ooband.moid
-}
-
 data "intersight_organization_organization" "org_moid" {
   name = "terratest"
 }
@@ -114,4 +72,16 @@ module "main" {
       }
     }
   }
+}
+
+output "imc" {
+  value = module.main.moid
+}
+
+output "inband" {
+  value = module.inband.moid
+}
+
+output "ooband" {
+  value = module.ooband.moid
 }
