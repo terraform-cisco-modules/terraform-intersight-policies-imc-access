@@ -11,5 +11,5 @@ terraform {
 provider "intersight" {
   apikey    = var.apikey
   endpoint  = var.endpoint
-  secretkey = var.secretkey
+  secretkey = fileexists(var.secretkeyfile) ? file(var.secretkeyfile) : var.secretkey
 }

@@ -10,8 +10,8 @@ terraform {
 # Setup provider, variables and outputs
 provider "intersight" {
   apikey    = var.apikey
-  secretkey = file(var.secretkeyfile)
   endpoint  = var.endpoint
+  secretkey = file(var.secretkeyfile)
 }
 
 variable "apikey" {

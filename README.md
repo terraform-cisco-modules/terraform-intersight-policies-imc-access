@@ -1,5 +1,8 @@
 <!-- BEGIN_TF_DOCS -->
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Developed by: Cisco](https://img.shields.io/badge/Developed%20by-Cisco-blue)](https://developer.cisco.com)
 [![Tests](https://github.com/terraform-cisco-modules/terraform-intersight-policies-imc-access/actions/workflows/terratest.yml/badge.svg)](https://github.com/terraform-cisco-modules/terraform-intersight-policies-imc-access/actions/workflows/terratest.yml)
+
 # Terraform Intersight Policies - IMC Access
 Manages Intersight IMC Access Policies
 
@@ -14,18 +17,54 @@ Location in GUI:
 
 ### main.tf
 ```hcl
+data "intersight_organization_organization" "org_moid" {
+  name = "terratest"
+}
+
+module "inband" {
+  source  = "terraform-cisco-modules/pools-ip/intersight"
+  version = ">=1.0.5"
+
+  assignment_order = "sequential"
+  description      = "default Inband IP Pool"
+  ipv4_blocks = [
+    {
+      from = "198.18.10.10"
+      size = 240
+    }
+  ]
+  ipv4_config = [
+    {
+      gateway       = "198.18.10.1"
+      netmask       = "255.255.255.0"
+      primary_dns   = "208.67.220.220"
+      secondary_dns = "208.67.222.222"
+    }
+  ]
+  name         = "default-inb"
+  organization = "terratest"
+}
+
 module "imc_access" {
   source  = "terraform-cisco-modules/policies-imc-access/intersight"
   version = ">= 1.0.1"
 
   description                = "default IMC Access Policy."
-  inband_ip_pool             = "default"
+  inband_ip_pool             = "default-inb"
   inband_vlan_id             = 4
   ipv4_address_configuration = true
   ipv6_address_configuration = false
+  moids                      = true
   name                       = "default"
-  organization               = "default"
+  organization               = data.intersight_organization_organization.org_moid.results[0].moid
   out_of_band_ip_pool        = ""
+  pools = {
+    ip = {
+      "default-inb" = {
+        moid = module.inband.moid
+      }
+    }
+  }
 }
 
 ```
@@ -45,7 +84,7 @@ terraform {
 provider "intersight" {
   apikey    = var.apikey
   endpoint  = var.endpoint
-  secretkey = var.secretkey
+  secretkey = fileexists(var.secretkeyfile) ? file(var.secretkeyfile) : var.secretkey
 }
 ```
 
@@ -64,7 +103,15 @@ variable "endpoint" {
 }
 
 variable "secretkey" {
-  description = "Intersight Secret Key."
+  default     = ""
+  description = "Intersight Secret Key Content."
+  sensitive   = true
+  type        = string
+}
+
+variable "secretkeyfile" {
+  default     = "blah.txt"
+  description = "Intersight Secret Key File Location."
   sensitive   = true
   type        = string
 }
@@ -73,19 +120,13 @@ variable "secretkey" {
 ## Environment Variables
 
 ### Terraform Cloud/Enterprise - Workspace Variables
-- Add variable apikey with value of [your-api-key]
-- Add variable secretkey with value of [your-secret-file-content]
+- Add variable apikey with the value of [your-api-key]
+- Add variable secretkey with the value of [your-secret-file-content]
 
-### Linux
+### Linux and Windows
 ```bash
 export TF_VAR_apikey="<your-api-key>"
-export TF_VAR_secretkey=`cat <secret-key-file-location>`
-```
-
-### Windows
-```bash
-$env:TF_VAR_apikey="<your-api-key>"
-$env:TF_VAR_secretkey="<secret-key-file-location>"
+export TF_VAR_secretkeyfile="<secret-key-file-location>"
 ```
 
 ## Requirements
