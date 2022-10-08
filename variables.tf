@@ -32,16 +32,16 @@ variable "ipv6_address_configuration" {
   type        = bool
 }
 
-variable "name" {
-  default     = "default"
-  description = "Name for the Policy."
-  type        = string
-}
-
 variable "moids" {
   default     = false
   description = "Flag to Determine if pools and policies should be data sources or if they already defined as a moid."
   type        = bool
+}
+
+variable "name" {
+  default     = "default"
+  description = "Name for the Policy."
+  type        = string
 }
 
 variable "organization" {
